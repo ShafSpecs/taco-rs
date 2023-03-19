@@ -1,7 +1,10 @@
+#[macro_use]
+mod parser;
 mod lang;
 mod token;
 mod error;
 mod run;
+mod core;
 
 use crate::lang::taco::Taco;
 
