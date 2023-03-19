@@ -1,6 +1,6 @@
-use super::scanner::Scanner;
+use crate::token::scanner::Scanner;
 
-pub fn run(source: String) {
+pub fn exec(source: String) {
   let mut scanner = Scanner::new(source);
   let tokens = scanner.scan_tokens();
   println!("{:#?}", tokens)

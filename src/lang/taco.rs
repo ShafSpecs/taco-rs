@@ -2,7 +2,7 @@ use std::fs::read;
 
 use rustyline::{DefaultEditor, error::ReadlineError};
 
-use crate::parser::run::run;
+use crate::run::exec;
 
 pub struct Taco {
     pub has_error: bool,
@@ -18,7 +18,7 @@ impl Taco {
 
         let source = String::from_utf8(bytes).unwrap();
 
-        run(source);
+        exec(source);
         todo!("Remove the code splurging and handle the error better");
     }
 
@@ -30,7 +30,7 @@ impl Taco {
             let readline = rl.readline(">> ");
             match readline {
                 Ok(line) => {
-                    run(line);
+                    exec(line);
                 }
                 Err(ReadlineError::Interrupted) => break,
                 Err(ReadlineError::Eof) => break,

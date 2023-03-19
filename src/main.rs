@@ -1,6 +1,7 @@
 mod lang;
-mod parser;
+mod token;
 mod error;
+mod run;
 
 use crate::lang::taco::Taco;
 
