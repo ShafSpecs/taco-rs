@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
 use crate::error::handling::error;
-
-use super::tokens::{Token, TokenType};
+use crate::token::tokens::{Token, TokenType};
 
 pub struct Scanner {
     pub source: String,
