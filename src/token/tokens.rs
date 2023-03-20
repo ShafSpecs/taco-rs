@@ -55,11 +55,11 @@ pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,
     pub literal: String,
-    pub line: i32,
+    pub line: u32,
 }
 
 impl Token {
-    pub fn new(token_type: TokenType, lexeme: String, literal: String, line: i32) -> Token {
+    pub fn new(token_type: TokenType, lexeme: String, literal: String, line: u32) -> Token {
         Token {
             token_type,
             lexeme,
