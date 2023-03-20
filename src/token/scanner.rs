@@ -232,9 +232,11 @@ impl Scanner {
             '+' => self.add_token_with_literal(TokenType::Plus, String::from("+")),
             ';' => self.add_token_with_literal(TokenType::Semicolon, String::from(";")),
             '*' => self.add_token_with_literal(TokenType::Star, String::from("*")),
+            ////* Two character tokens
             '!' => {
                 if self.match_next('=') {
                     self.add_token_with_literal(TokenType::BangEqual, String::from("!="));
+                    self.advance();
                 } else {
                     self.add_token_with_literal(TokenType::Bang, String::from("!"));
                 }
@@ -242,6 +244,7 @@ impl Scanner {
             '=' => {
                 if self.match_next('=') {
                     self.add_token_with_literal(TokenType::EqualEqual, String::from("=="));
+                    self.advance();
                 } else {
                     self.add_token_with_literal(TokenType::Equal, String::from("="));
                 }
@@ -249,6 +252,7 @@ impl Scanner {
             '<' => {
                 if self.match_next('=') {
                     self.add_token_with_literal(TokenType::LessEqual, String::from("<="));
+                    self.advance();
                 } else {
                     self.add_token_with_literal(TokenType::Less, String::from("<"));
                 }
@@ -256,10 +260,12 @@ impl Scanner {
             '>' => {
                 if self.match_next('=') {
                     self.add_token_with_literal(TokenType::GreaterEqual, String::from(">="));
+                    self.advance();
                 } else {
                     self.add_token_with_literal(TokenType::Greater, String::from(">"));
                 }
             }
+            // End of two character tokens *//
             '#' => {
                 while !self.is_at_end() && self.peek() != '\n' {
                     self.advance();
