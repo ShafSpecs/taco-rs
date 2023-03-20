@@ -2,6 +2,7 @@ use crate::core::expression::Expr;
 use crate::into_expr;
 use crate::token::tokens::Token;
 
+#[derive(Debug)]
 pub struct UnaryExpr {
     operator: Token,
     right: Expr,

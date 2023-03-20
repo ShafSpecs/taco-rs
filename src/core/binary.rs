@@ -1,5 +1,6 @@
 use crate::{core::expression::Expr, token::tokens::Token, into_expr};
 
+#[derive(Debug)]
 pub struct BinaryExpr {
   left: Expr,
   operator: Token,
