@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::token::tokens::{Token, TokenType};
 use crate::error::handling::report;
 
@@ -15,6 +17,17 @@ pub fn throw_error(token: Token, message: &str) -> ParserError {
 pub struct ParserError {
   pub token: Vec<Token>,
   pub message: String,
+}
+
+impl Display for ParserError {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(
+      f,
+      "[Line {}] Error: {}",
+      self.token[0].get_line(),
+      self.message
+    )
+  }
 }
 
 impl ParserError {
