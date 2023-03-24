@@ -15,6 +15,18 @@ pub enum Value {
     Nil,
 }
 
+impl From<Literal> for Value {
+    fn from(literal: Literal) -> Self {
+        match literal {
+            Literal::Integer(i) => Value::Integer(i),
+            Literal::Float(f) => Value::Float(f),
+            Literal::String(s) => Value::String(s),
+            Literal::Boolean(b) => Value::Boolean(b),
+            Literal::Nil => Value::Nil,
+        }
+    }
+}
+
 impl Value {
     pub fn is_truthy(&self) -> bool {
         match self {
@@ -102,7 +114,9 @@ impl Interpreter {
     }
 
     fn execute(&self, environment: &mut Environment, statement: Expr) {
-        match statement {
+        let val = self.evaluate(environment, statement.clone());
+        println!("{:?}", self.stringify(val));
+        // match statement {
             // Expr::Expression(expr) => {
             //     let value = self.evaluate(environment, *expr);
             //     println!("{}", self.stringify(value));
@@ -143,8 +157,8 @@ impl Interpreter {
             // Expr::Set(_, _, _) => todo!(),
             // Expr::This(_) => todo!(),
             // Expr::Super(_, _) => todo!(),
-            _ => todo!(),
-        }
+            // _ => todo!(),
+        // }
     }
 
     // fn execute(&self, environment: &mut environment::Environment, statement: parser::Statement) {
@@ -231,13 +245,13 @@ impl Interpreter {
                 let left = self.evaluate(environment, left);
                 let right = self.evaluate(environment, right);
                 match operator.token_type {
-                    TokenType::Plus => match (left, right) {
+                    TokenType::Plus => match (left.clone(), right.clone()) {
                         (Value::Integer(left), Value::Integer(right)) => {
                             Value::Integer(left + right)
                         }
                         (Value::Float(left), Value::Float(right)) => Value::Float(left + right),
                         (Value::String(left), Value::String(right)) => Value::String(left + &right),
-                        _ => panic!("Invalid operands for addition"),
+                        _ => panic!("Invalid operands for addition: {:?} - {:?}", left.clone(), right.clone()),
                     },
                     TokenType::Minus => match (left, right) {
                         (Value::Integer(left), Value::Integer(right)) => {
