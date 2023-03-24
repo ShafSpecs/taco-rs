@@ -5,18 +5,22 @@ mod token;
 mod error;
 mod run;
 mod core;
+mod interpreter;
+mod environment;
+mod util;
 
 use crate::lang::taco::Taco;
 
 fn main() {
     let mut args = std::env::args();
+    let mut lang = Taco::new();
 
     if args.len() > 2 {
         println!("Usage: taco [file]");
     } else if args.len() == 2 {
-        Taco::run_file(args.nth(1).unwrap());
+        lang.run_file(args.nth(1).unwrap());
     } else {
-        Taco::run_repl();
+        lang.run_repl();
     }
 
     println!("Done!")
