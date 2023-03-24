@@ -8,6 +8,7 @@ mod core;
 mod interpreter;
 mod environment;
 mod util;
+mod syntax;
 
 use crate::lang::taco::Taco;
 
