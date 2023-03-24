@@ -99,7 +99,7 @@ impl Interpreter {
             return Ok(());
         }
 
-        let mut statements = match ast {
+        let statements = match ast {
             Ok(expr) => expr,
             Err(err) => {
                 println!("{:?}", err);
@@ -117,47 +117,47 @@ impl Interpreter {
         let val = self.evaluate(environment, statement.clone());
         println!("{:?}", self.stringify(val));
         // match statement {
-            // Expr::Expression(expr) => {
-            //     let value = self.evaluate(environment, *expr);
-            //     println!("{}", self.stringify(value));
-            // }
-            // Expr::VariableDeclaration(name, expr) => {
-            //     let value = self.evaluate(environment, *expr);
-            //     environment.define(name, value);
-            // }
-            // Expr::VariableAssignment(name, expr) => {
-            //     let value = self.evaluate(environment, *expr);
-            //     environment.assign(name, value);
-            // }
-            // Expr::Block(statements) => {
-            //     let mut block_environment = Environment::new();
-            //     block_environment.enclosing = Some(environment);
-            //     for statement in statements {
-            //         self.execute(&mut block_environment, statement);
-            //     }
-            // }
-            // Expr::If(condition, then_branch, else_branch) => {
-            //     let condition_value = self.evaluate(environment, *condition);
-            //     if condition_value.is_truthy() {
-            //         self.execute(environment, *then_branch);
-            //     } else if let Some(else_branch) = else_branch {
-            //         self.execute(environment, *else_branch);
-            //     }
-            // }
-            // Expr::While(condition, body) => {
-            //     while self.evaluate(environment, *condition).is_truthy() {
-            //         self.execute(environment, *body);
-            //     }
-            // }
-            // Expr::Function(_, _, _) => todo!(),
-            // Expr::Call(_, _) => todo!(),
-            // Expr::Return(_, _) => todo!(),
-            // Expr::Class(_, _, _) => todo!(),
-            // Expr::Get(_, _) => todo!(),
-            // Expr::Set(_, _, _) => todo!(),
-            // Expr::This(_) => todo!(),
-            // Expr::Super(_, _) => todo!(),
-            // _ => todo!(),
+        // Expr::Expression(expr) => {
+        //     let value = self.evaluate(environment, *expr);
+        //     println!("{}", self.stringify(value));
+        // }
+        // Expr::VariableDeclaration(name, expr) => {
+        //     let value = self.evaluate(environment, *expr);
+        //     environment.define(name, value);
+        // }
+        // Expr::VariableAssignment(name, expr) => {
+        //     let value = self.evaluate(environment, *expr);
+        //     environment.assign(name, value);
+        // }
+        // Expr::Block(statements) => {
+        //     let mut block_environment = Environment::new();
+        //     block_environment.enclosing = Some(environment);
+        //     for statement in statements {
+        //         self.execute(&mut block_environment, statement);
+        //     }
+        // }
+        // Expr::If(condition, then_branch, else_branch) => {
+        //     let condition_value = self.evaluate(environment, *condition);
+        //     if condition_value.is_truthy() {
+        //         self.execute(environment, *then_branch);
+        //     } else if let Some(else_branch) = else_branch {
+        //         self.execute(environment, *else_branch);
+        //     }
+        // }
+        // Expr::While(condition, body) => {
+        //     while self.evaluate(environment, *condition).is_truthy() {
+        //         self.execute(environment, *body);
+        //     }
+        // }
+        // Expr::Function(_, _, _) => todo!(),
+        // Expr::Call(_, _) => todo!(),
+        // Expr::Return(_, _) => todo!(),
+        // Expr::Class(_, _, _) => todo!(),
+        // Expr::Get(_, _) => todo!(),
+        // Expr::Set(_, _, _) => todo!(),
+        // Expr::This(_) => todo!(),
+        // Expr::Super(_, _) => todo!(),
+        // _ => todo!(),
         // }
     }
 
@@ -251,7 +251,11 @@ impl Interpreter {
                         }
                         (Value::Float(left), Value::Float(right)) => Value::Float(left + right),
                         (Value::String(left), Value::String(right)) => Value::String(left + &right),
-                        _ => panic!("Invalid operands for addition: {:?} - {:?}", left.clone(), right.clone()),
+                        _ => panic!(
+                            "Invalid operands for addition: {:?} - {:?}",
+                            left.clone(),
+                            right.clone()
+                        ),
                     },
                     TokenType::Minus => match (left, right) {
                         (Value::Integer(left), Value::Integer(right)) => {
@@ -269,9 +273,19 @@ impl Interpreter {
                     },
                     TokenType::Slash => match (left, right) {
                         (Value::Integer(left), Value::Integer(right)) => {
+                            if right.eq(&i64::from(0)) {
+                                panic!("Division by zero");
+                            }
+
                             Value::Integer(left / right)
                         }
-                        (Value::Float(left), Value::Float(right)) => Value::Float(left / right),
+                        (Value::Float(left), Value::Float(right)) => {
+                            if right.eq(&f64::from(0)) {
+                                panic!("Division by zero");
+                            }
+                            
+                            Value::Float(left / right)
+                        }
                         _ => panic!("Invalid operands for division"),
                     },
                     TokenType::Greater => match (left, right) {
