@@ -74,4 +74,20 @@ impl Token {
             self.token_type, self.lexeme, self.literal
         ));
     }
+
+    pub fn get_token_type(&self) -> &TokenType {
+        &self.token_type
+    }
+
+    pub fn get_lexeme(&self) -> &String {
+        &self.lexeme
+    }
+
+    pub fn get_literal(&self) -> &String {
+        &self.literal
+    }
+
+    pub fn get_line(&self) -> u32 {
+        self.line
+    }
 }
