@@ -3,7 +3,7 @@ use crate::core::grouping::GroupingExpr;
 use crate::core::literal::Literal;
 use crate::core::unary::UnaryExpr;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expr {
     BinaryExpr(Box<BinaryExpr>),
     GroupingExpr(Box<GroupingExpr>),

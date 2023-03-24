@@ -10,7 +10,7 @@ impl<T> LiteralExpr<T> {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Literal {
   String(String),
   Integer(i64),

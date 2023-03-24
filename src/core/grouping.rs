@@ -1,6 +1,6 @@
 use crate::{core::expression::Expr, into_expr};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GroupingExpr {
   pub expr: Expr
 }
