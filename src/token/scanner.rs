@@ -311,7 +311,7 @@ impl Scanner {
         self.tokens.push(Token::new(
             TokenType::Eof,
             String::from(""),
-            String::from(""),
+            String::new(),
             self.line.into(),
         ));
 
