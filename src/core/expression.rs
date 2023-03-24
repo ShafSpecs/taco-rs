@@ -9,5 +9,5 @@ pub enum Expr {
     GroupingExpr(Box<GroupingExpr>),
     UnaryExpr(Box<UnaryExpr>),
     // LiteralExpr(Box<LiteralExpr<Box<dyn Any>>>)
-    Literal(Literal),
+    Literal(Literal)
 }
