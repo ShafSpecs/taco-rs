@@ -23,7 +23,7 @@ impl Display for ParserError {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     write!(
       f,
-      "[Line {}] Error: {}",
+      "[Line {}] {}",
       self.token[0].get_line(),
       self.message
     )
