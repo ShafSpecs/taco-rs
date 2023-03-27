@@ -34,3 +34,8 @@ impl RuntimeError {
         &self.message
     }
 }
+
+pub fn throw_runtime_error(error: RuntimeError) -> RuntimeError {
+    eprintln!("[Line {}]: {}", error.get_token().get_line(), error.get_message());
+    error
+}
