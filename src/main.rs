@@ -22,7 +22,6 @@ fn main() {
         lang.run_file(args.nth(1).unwrap());
     } else {
         lang.run_repl();
+        println!("Done!");
     }
-
-    println!("Done!")
 }
