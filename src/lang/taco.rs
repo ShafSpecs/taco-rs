@@ -51,7 +51,7 @@ impl Taco {
             std::process::exit(70);
         }
 
-        todo!("Remove the code splurging (in `exec`) and handle the error better");
+        // todo!("Remove the code splurging (in `exec`) and handle the error better");
     }
 
     pub fn run_repl(&mut self) {
