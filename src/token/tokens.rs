@@ -75,6 +75,10 @@ impl Token {
         ));
     }
 
+    pub fn as_string(&mut self) -> String {
+        return String::from(format!("{:#?}", self.lexeme));
+    }
+
     pub fn get_token_type(&self) -> &TokenType {
         &self.token_type
     }
