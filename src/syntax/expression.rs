@@ -1,5 +1,6 @@
 use crate::core::expression::Expr;
 
+#[derive(Clone, Debug)]
 pub struct ExpressionStatement {
     pub expression: Expr
 }
