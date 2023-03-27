@@ -34,7 +34,7 @@ impl Literal {
         Err(_) => match value {
           "true" => Literal::Boolean(true),
           "false" => Literal::Boolean(false),
-          "nil" => Literal::Nil,
+          "nil" | "null" => Literal::Nil,
           _ => Literal::String(value.to_string())
         }
       }
