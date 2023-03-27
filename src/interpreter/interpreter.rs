@@ -1,8 +1,11 @@
+use std::ops::Deref;
+
 use crate::{
     core::{expression::Expr, literal::Literal},
     environment::environment::Environment,
     error::{interpreter::RuntimeError, parser::ParserError},
     lang::taco::Taco,
+    syntax::statement::Statement,
     token::tokens::TokenType,
 };
 
@@ -93,72 +96,48 @@ impl Interpreter {
         }
     }
 
-    pub fn interpret(&self, ast: Result<Expr, ParserError>) -> Result<(), RuntimeError> {
+    pub fn interpret(&self, ast: Result<Vec<Statement>, ParserError>) -> Result<(), RuntimeError> {
         if self.had_error {
-            // todo!("Handle this better")
             return Ok(());
         }
 
         let statements = match ast {
             Ok(expr) => expr,
             Err(err) => {
-                println!("{:?}", err);
-                // todo!("Handle this better")
+                // taco.set_error(true);
                 return Ok(());
             }
         };
 
         let mut environment = Environment::new();
-        self.execute(&mut environment, statements);
+
+        for statement in statements {
+            self.execute(&mut environment, statement);
+        }
+
         Ok(())
     }
 
-    fn execute(&self, environment: &mut Environment, statement: Expr) {
-        let val = self.evaluate(environment, statement.clone());
-        println!("{:?}", self.stringify(val));
-        // match statement {
-        // Expr::Expression(expr) => {
-        //     let value = self.evaluate(environment, *expr);
-        //     println!("{}", self.stringify(value));
-        // }
-        // Expr::VariableDeclaration(name, expr) => {
-        //     let value = self.evaluate(environment, *expr);
-        //     environment.define(name, value);
-        // }
-        // Expr::VariableAssignment(name, expr) => {
-        //     let value = self.evaluate(environment, *expr);
-        //     environment.assign(name, value);
-        // }
-        // Expr::Block(statements) => {
-        //     let mut block_environment = Environment::new();
-        //     block_environment.enclosing = Some(environment);
-        //     for statement in statements {
-        //         self.execute(&mut block_environment, statement);
-        //     }
-        // }
-        // Expr::If(condition, then_branch, else_branch) => {
-        //     let condition_value = self.evaluate(environment, *condition);
-        //     if condition_value.is_truthy() {
-        //         self.execute(environment, *then_branch);
-        //     } else if let Some(else_branch) = else_branch {
-        //         self.execute(environment, *else_branch);
-        //     }
-        // }
-        // Expr::While(condition, body) => {
-        //     while self.evaluate(environment, *condition).is_truthy() {
-        //         self.execute(environment, *body);
-        //     }
-        // }
-        // Expr::Function(_, _, _) => todo!(),
-        // Expr::Call(_, _) => todo!(),
-        // Expr::Return(_, _) => todo!(),
-        // Expr::Class(_, _, _) => todo!(),
-        // Expr::Get(_, _) => todo!(),
-        // Expr::Set(_, _, _) => todo!(),
-        // Expr::This(_) => todo!(),
-        // Expr::Super(_, _) => todo!(),
-        // _ => todo!(),
-        // }
+    fn execute(&self, environment: &mut Environment, statement: Statement) {
+        match statement {
+            Statement::LetStatement(expr) => {
+                let initializer = match expr.initializer {
+                    Expr::Literal(Literal::Nil) => Value::Nil,
+                    _ => self.evaluate(environment, expr.initializer),
+                };
+
+                environment.define(expr.name.get_lexeme().to_string(), initializer);
+            }
+            Statement::ExpressionStatement(expr) => {
+                let value = self.evaluate(environment, expr.expression);
+                println!("{}", self.stringify(value));
+            }
+            Statement::PrintStatement(expr) => {
+                let value = self.evaluate(environment, expr.expression);
+                println!("{}", self.stringify(value));
+            }
+            _ => todo!(),
+        }
     }
 
     // fn execute(&self, environment: &mut environment::Environment, statement: parser::Statement) {
@@ -283,7 +262,7 @@ impl Interpreter {
                             if right.eq(&f64::from(0)) {
                                 panic!("Division by zero");
                             }
-                            
+
                             Value::Float(left / right)
                         }
                         _ => panic!("Invalid operands for division"),
@@ -348,6 +327,11 @@ impl Interpreter {
                     },
                     _ => panic!("Invalid binary operator"),
                 }
+            }
+            Expr::VarDeclaration(variable) => {
+                let name = variable.get_lexeme().clone();
+                let value = environment.get(name);
+                value
             }
         }
     }
