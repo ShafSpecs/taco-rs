@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use crate::interpreter::interpreter::Value;
 
+#[derive(Debug, Clone)]
 pub struct Environment {
     values: HashMap<String, Value>,
     enclosing: Option<Box<Environment>>,
@@ -35,7 +36,7 @@ impl Environment {
         } else if let Some(enclosing) = &self.enclosing {
             enclosing.get(name)
         } else {
-            panic!("Undefined variable '{}'.", name);
+            panic!("Undefined variable '{}'", name);
         }
     }
 }
