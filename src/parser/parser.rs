@@ -1,6 +1,10 @@
 use crate::core::grouping::GroupingExpr;
 use crate::core::literal::Literal;
 use crate::error::parser::{throw_error, ParserError};
+use crate::syntax::expression::ExpressionStatement;
+use crate::syntax::print::PrintStatement;
+use crate::syntax::r#let::LetStatement;
+use crate::syntax::statement::Statement;
 use crate::{
     core::{binary::BinaryExpr, expression::Expr, unary::UnaryExpr},
     token::tokens::{Token, TokenType},
@@ -30,11 +34,86 @@ impl Parser {
         }
     }
 
-    pub fn parse(&mut self) -> Result<Expr, ParserError> {
-        match self.expression() {
-            Ok(expr) => Ok(expr),
-            Err(err) => Err(err),
+    pub fn parse(&mut self) -> Result<Vec<Statement>, ParserError> {
+        let mut statements = Vec::<Statement>::new();
+
+        while !self.is_at_end() {
+            let dec = match self.declaration() {
+                Ok(dec) => dec,
+                Err(err) => {
+                    self.synchronize();
+                    return Err(ParserError::new(err.token, err.message.as_str()));
+                }
+            };
+
+            statements.push(dec);
         }
+
+        return Ok(statements);
+    }
+
+    fn declaration(&mut self) -> Result<Statement, ParserError> {
+        if self.match_tokens(&[TokenType::Let]) {
+            return self.let_declaration();
+        }
+
+        if self.match_tokens(&[TokenType::Print]) {
+            return self.print_statement();
+        }
+
+        return self.expr_statement();
+    }
+
+    fn let_declaration(&mut self) -> Result<Statement, ParserError> {
+        let name = match self.consume(TokenType::Identifier, "Expect variable name.") {
+            Ok(name) => name,
+            Err(err) => return Err(err),
+        };
+
+        let mut initializer = Expr::Literal(Literal::Nil);
+
+        if self.match_tokens(&[TokenType::Equal]) {
+            let value = match self.expression() {
+                Ok(expr) => expr,
+                Err(err) => return Err(err),
+            };
+
+            initializer = value.clone().into();
+        }
+
+        if self.match_tokens(&[TokenType::Semicolon]) {
+            return Ok(Statement::LetStatement(LetStatement::new(name, initializer)));
+        }
+
+        return Err(throw_error(self.previous(), "Expect ';' after variable declaration."));
+    }
+
+    fn print_statement(&mut self) -> Result<Statement, ParserError> {
+        let value = match self.expression() {
+            Ok(expr) => expr,
+            Err(err) => return Err(err),
+        };
+
+        if self.match_tokens(&[TokenType::Semicolon]) {
+            return Ok(Statement::PrintStatement(PrintStatement::new(value)));
+        }
+
+        return Err(throw_error(self.peek(), "Expect ';' after value."));
+    }
+
+    fn expr_statement(&mut self) -> Result<Statement, ParserError> {
+        let expr = match self.expression() {
+            Ok(expr) => expr,
+            Err(err) => return Err(err),
+        };
+
+        if self.match_tokens(&[TokenType::Semicolon]) {
+            return Ok(Statement::ExpressionStatement(ExpressionStatement::new(
+                expr,
+            )));
+        }
+
+        return Err(throw_error(self.peek(), "Expect ';' after expression."));
     }
 
     fn expression(&mut self) -> Result<Expr, ParserError> {
@@ -150,6 +229,10 @@ impl Parser {
             return Ok(Expr::Literal(Literal::new(self.previous().lexeme.as_str())));
         }
 
+        if self.match_tokens(&[TokenType::Identifier]) {
+            return Ok(Expr::VarDeclaration(self.previous()));
+        }
+
         if self.match_tokens(&[TokenType::LeftParen]) {
             let expr = match self.expression() {
                 Ok(expr) => expr,
@@ -227,6 +310,6 @@ impl Parser {
                 | TokenType::Return => return,
                 _ => self.advance(),
             };
-        };
+        }
     }
 }
